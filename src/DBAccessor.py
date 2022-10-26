@@ -35,5 +35,3 @@ def delete_all_users()->list[dict]:
     all_user=get_all_users()
     user_db.delete_many({})
     return all_user
-
-print(get_all_users())
