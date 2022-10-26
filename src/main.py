@@ -1,42 +1,63 @@
-import fastapi as _fastapi
-import service as _service
-import starlette.responses as _responses
+import fastapi
+from DTO import UserModel
+from RequestModel import UserRequestModel
+import Service
+from enum import Enum
 
-app = _fastapi.FastAPI()
+app = fastapi.FastAPI()
 
-
-@app.get("/")
-async def root():
-    return _responses.RedirectResponse("/redoc")
-
-
-@app.get("/events/today")
-async def today():
-    return _service.todays_events()
-
-
-@app.get("/events")
-async def events():
-    return _service.get_all_events()
+class Errors(Enum):
+    ERROR_FETCHING_USER=fastapi.HTTPException(status_code=301,detail=f"error while fetching user details")
+    ERROR_USER_NOT_ADDED=fastapi.HTTPException(status_code=302,detail=f"error while adding the user")
+    ERROR_USER_NOT_UPDATED=fastapi.HTTPException(status_code=303,detail=f"error while updating the user")
+    ERROR_USER_NOT_DELETED=fastapi.HTTPException(status_code=304,detail=f"error while deleting the user data")
+    ERROR_NOT_KNOWN=fastapi.HTTPException(status_code=305,detail=f"unknown error")
 
 
-@app.get("/events/{month}")
-async def events_month(month: str):
-    month_events = _service.month_events(month)
-    if month_events:
-        return month_events
-
-    return _fastapi.HTTPException(
-        status_code=404, detail=f"Month: {month} could not be found"
-    )
+@app.post("/user/add")
+async def add_user(user:UserRequestModel) -> UserModel:
+    response=Service.add_user(user)
+    if isinstance(response,UserModel):
+        return response
+    return Errors[response].value
 
 
-@app.get("/events/{month}/{day}")
-async def events_of_day(month: str, day: int):
-    events = _service.day_events(month, day)
-    if events:
-        return events
+@app.get("/user/{id}/get")
+async def get_user(id:str) -> UserModel:
+    response=Service.get_user(id)
+    if isinstance(response,UserModel):
+        return response
+    return Errors[response].value
 
-    return _fastapi.HTTPException(
-        status_code=404, detail=f"Date: {month}/{day} could not be found"
-    )
+
+@app.put("/user/{id}/update")
+async def update_user(id:str,user:UserRequestModel) -> UserModel:
+    response=Service.update_user(id,user)
+    if isinstance(response,UserModel):
+        return response
+    return Errors[response].value
+
+
+@app.delete("/user/{id}/delete")
+async def delete_user(id:str)->UserModel:
+    response=Service.delete_user(id)
+    if isinstance(response,UserModel):
+        return response
+    return Errors[response].value
+
+
+@app.delete("/user/delete/all")
+async def delete_all_users() -> list[UserModel]:
+    response=Service.delete_all_users()
+    if isinstance(response,list):
+        return response
+    return Errors[response].value
+
+
+@app.get('/user/get/all')
+async def get_all_users()->list[UserModel]:
+    response=Service.get_all_users()
+    if isinstance(response,list):
+        return response
+    return Errors[response].value
+
