@@ -2,7 +2,7 @@ from RequestModel import *
 import pymongo
 from bson.objectid import ObjectId
 
-db_client = pymongo.MongoClient("mongodb+srv://bharatsoni3011:Mongo@atlas@cluster0.wod1efn.mongodb.net/?retryWrites=true&w=majority")
+db_client = pymongo.MongoClient("mongodb+srv://bharat19461:bharatsoni@cluster0.eruaidg.mongodb.net/?retryWrites=true&w=majority")
 current_db = db_client["currentdb"]
 user_db=current_db["userdb"]
 
@@ -35,3 +35,5 @@ def delete_all_users()->list[dict]:
     all_user=get_all_users()
     user_db.delete_many({})
     return all_user
+
+print(get_all_users())
