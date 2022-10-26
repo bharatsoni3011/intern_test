@@ -2,8 +2,7 @@ from RequestModel import *
 import pymongo
 from bson.objectid import ObjectId
 
-
-db_client = pymongo.MongoClient("localhost",27017)
+db_client = pymongo.MongoClient("mongodb+srv://bharatsoni3011:Mongo@atlas@cluster0.wod1efn.mongodb.net/?retryWrites=true&w=majority")
 current_db = db_client["currentdb"]
 user_db=current_db["userdb"]
 
