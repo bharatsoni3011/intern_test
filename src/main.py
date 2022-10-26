@@ -13,6 +13,9 @@ class Errors(Enum):
     ERROR_USER_NOT_DELETED=fastapi.HTTPException(status_code=304,detail=f"error while deleting the user data")
     ERROR_NOT_KNOWN=fastapi.HTTPException(status_code=305,detail=f"unknown error")
 
+@app.get("/")
+async def root():
+    return fastapi.responses.RedirectResponse('/docs')
 
 @app.post("/user/add")
 async def add_user(user:UserRequestModel) -> UserModel:
